@@ -46,6 +46,23 @@ class Receitas {
             return res.status(400).json(error.message);
         }
     }
+
+    static async detalhamentoDeReceita(req, res) {
+        const { id } = req.params;
+
+        try {
+            const umaReceita = await database.Receitas.findOne({
+                where: { id: id }
+            })
+            return res.status(200).json(umaReceita)
+        } catch (error) {
+            return res.status(400).json(error.message)
+        }
+    }
+
+    static async validacaoDeReceita(req, res) {
+        
+    }
 }
 
 module.exports = Receitas;
