@@ -1,46 +1,29 @@
 const database = require("../models");
 const moment = require("moment");
 const { Op } = require("sequelize");
-const sequelize = require("sequelize");
 
 class Receitas {
     static async cadastroDeReceita(req, res) {
         const novaReceita = req.body;
         const dataNovaReceita = req.body.data;
-
         const descricaoNovaReceita = req.body.descricao;
-        let mesNovaReceita = (moment(dataNovaReceita).month()) + 1;
-        let anoNovaReceita = moment(dataNovaReceita).year();
 
-        let anoTodasReceitas = await database.Receitas.findAll({attributes: [[ sequelize.fn('YEAR', sequelize.col('data')), 'ano']] })
-        let mesTodasReceitas = await database.Receitas.findAll({attributes: [[ sequelize.fn('MONTH', sequelize.col('data')), 'mes']] })
-        
-        let arrayComTodosMeses = [];
-        let arrayComTodosAnos = [];
-
-        for (let i = 0; i < mesTodasReceitas.length; i++) {
-            let mes = Object.values(mesTodasReceitas[i].dataValues)
-            arrayComTodosMeses.push(Number(mes))
-        }
-
-        for (let i = 0; i < anoTodasReceitas.length; i++) {
-            let ano = Object.values(anoTodasReceitas[i].dataValues)
-            arrayComTodosAnos.push(Number(ano))
-        }
-
-        let mesmoAnoDaRequisicao = arrayComTodosAnos.filter((a, ano) => arrayComTodosAnos[ano] === anoNovaReceita)
-        let mesmoMesDaRequisicao = arrayComTodosMeses.filter((a, mes) => arrayComTodosMeses[mes] === mesNovaReceita)
+        const comecoDoMes = moment(dataNovaReceita).startOf('month').format('YYYY-MM-DD');
+        const finalDoMes = moment(dataNovaReceita).endOf('month').format('YYYY-MM-DD');
 
         try {
-            const descricaoEmTodasReceitas = await database.Receitas.findAll({
+            const descricaoEmTodasReceitas = await database.Receitas.findOne({
                 where: {
-                    descricao: descricaoNovaReceita,
-                }
-            });
+                    [Op.and]: {
+                        descricao: descricaoNovaReceita,
+                        data: {
+                                [Op.gte]: comecoDoMes,
+                                [Op.lte]: finalDoMes
+                        }
+                    }
+                }});
 
-            if (descricaoEmTodasReceitas &&
-                mesmoAnoDaRequisicao.length > 0 &&
-                mesmoMesDaRequisicao.length > 0) {
+            if (descricaoEmTodasReceitas) {
                 throw new Error('receita com a mesma descrição já cadastrada nesse mês')
             } else {
                 try {
