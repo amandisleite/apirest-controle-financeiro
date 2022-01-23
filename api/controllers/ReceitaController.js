@@ -97,39 +97,4 @@ class Receitas {
     }
 }
 
-/*
-async function validaReceita(novaReceita) {
-
-    const dataNovaReceita = novaReceita.data;
-    const descricaoNovaReceita = novaReceita.descricao;
-
-    const comecoDoMes = moment(dataNovaReceita).startOf('month').format('YYYY-MM-DD');
-    const finalDoMes = moment(dataNovaReceita).endOf('month').format('YYYY-MM-DD');
-
-    try {
-        const dadoExisteEmAlgumaReceita = await database.Receitas.findOne({
-                where: {
-                    [Op.and]: {
-                        descricao: descricaoNovaReceita,
-                        data: {
-                                [Op.gte]: comecoDoMes,
-                                [Op.lte]: finalDoMes
-                        }
-                    }
-                }
-            }
-        );
-        
-        if (dadoExisteEmAlgumaReceita) {
-            return true;
-        } else {
-            return false;
-        }
-
-    } catch (error) {
-        return error.message
-    }
-}
-*/
-
 module.exports = Receitas;

@@ -40,7 +40,12 @@ class Despesas {
             const umaDespesa = await database.Despesas.findOne({
                 where: { id: Number(id) }
             })
-            return res.status(200).json(umaDespesa)
+            if (umaDespesa) {
+                return res.status(200).json(umaDespesa)
+            } else {
+                throw new RegistroNaoExiste;
+            }
+
         } catch (error) {
             return next(error);
         }
@@ -91,40 +96,5 @@ class Despesas {
         }
     }
 }
-
-/*
-async function validaDespesa(novaDespesa) {
-
-    const dataNovaDespesa = novaDespesa.data;
-    const descricaoNovaDespesa = novaDespesa.descricao;
-
-    const comecoDoMes = moment(dataNovaDespesa).startOf('month').format('YYYY-MM-DD');
-    const finalDoMes = moment(dataNovaDespesa).endOf('month').format('YYYY-MM-DD');
-
-    try {
-        const dadoExisteEmAlgumaDespesa = await database.Despesas.findOne({
-                where: {
-                    [Op.and]: {
-                        descricao: descricaoNovaDespesa,
-                        data: {
-                                [Op.gte]: comecoDoMes,
-                                [Op.lte]: finalDoMes
-                        }
-                    }
-                }
-            }
-        );
-        
-        if (dadoExisteEmAlgumaDespesa) {
-            return true;
-        } else {
-            return false;
-        }
-
-    } catch (error) {
-        return error.message
-    }
-}
-*/
 
 module.exports = Despesas;

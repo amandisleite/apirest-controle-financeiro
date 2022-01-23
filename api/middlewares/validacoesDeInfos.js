@@ -4,14 +4,6 @@ const { Op } = require("sequelize");
 const RegistroJaExiste = require("../errors/RegistroJaExiste");
 const CampoInvalido = require("../errors/CampoInvalido");
 
-class ModeloInfo {
-    constructor ({ descricao, valor, data }) {
-        this.descricao = descricao;
-        this.valor = valor;
-        this.data = data;
-    }
-}
-
 class Validacao {
 
     static async validaInfo(novaInfo, tabela) {
@@ -53,21 +45,6 @@ class Validacao {
 
         } else {
             throw new CampoInvalido;
-        }
-    }
-
-    static camposPreenchidos(info) {
-
-        // let formatoInfos = new ModeloInfo(novaInfo);
-
-        let infosEmArray = Object.values(info);
-
-        let temCampoVazio = infosEmArray.filter((chave, campo) => typeof infosEmArray[campo] === "undefined");
-
-        if (temCampoVazio.length > 0) {
-            return false;
-        } else {
-            return true;
         }
     }
     

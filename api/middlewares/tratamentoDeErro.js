@@ -17,6 +17,7 @@ module.exports = (error, req, res, next) => {
     res.status(status);
     res.json({
         mensagem: error.message,
-        id: error.idError
+        id: error.errorId,
+        name: error.name
     })
 }
