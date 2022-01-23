@@ -1,22 +1,25 @@
 const database = require("../models");
 
-const RegistroJaExiste = require("../errors/RegistroJaExiste");
+const RegistroPraAtualizarJaCriado = require("../errors/RegistroPraAtualizarJaCriado");
+const RegistroJaCriado = require("../errors/RegistroJaCriado");
 const RegistroNaoExiste = require("../errors/RegistroNaoExiste");
 
 const { validaInfo } = require("../middlewares/validacoesDeInfos");
 
-class Receitas {
+class ReceitaController {
+
     static async cadastroDeReceita(req, res, next) {
         let novaReceita = req.body;
+        let id = 0;
 
         try {
-            let receitaJaExiste = await validaInfo(novaReceita, Receitas);
+            let receitaJaExiste = await validaInfo(novaReceita, id, database.Receitas);
             
             if (receitaJaExiste) {
-                throw new RegistroJaExiste;
+                throw new RegistroJaCriado;
             } else {
                 const receitaCriada = await database.Receitas.create(novaReceita);
-                return res.status(200).json(receitaCriada);
+                return res.status(201).json(receitaCriada);
             }
 
         } catch (error) {
@@ -56,10 +59,11 @@ class Receitas {
         const novasInfos = req.body;
 
         try {
-            let receitaJaExiste = await validaInfo(novasInfos, Receitas);
+   
+            let receitaJaExiste = await validaInfo(novasInfos, id, database.Receitas);
             
             if (receitaJaExiste) {
-                throw new RegistroJaExiste;
+                throw new RegistroPraAtualizarJaCriado;
             } else {
                 await database.Receitas.update(novasInfos, {
                     where: { id: Number(id) }
@@ -67,7 +71,8 @@ class Receitas {
                 const receitaAtualizada = await database.Receitas.findOne({
                     where: { id: Number(id) }
                 });
-                return res.status(200).json(receitaAtualizada);
+                return res.status(202).json(`receita teve seus dados atualizados para:
+                ${Object.entries(receitaAtualizada.dataValues)}`);
             }
 
         } catch (error) {
@@ -86,7 +91,7 @@ class Receitas {
                 await database.Receitas.destroy({
                     where: { id: Number(id) }
                 })
-                return res.status(200).json(`receita ${id} deletada`)
+                return res.status(202).json(`receita ${id} deletada`)
             } else {
                 throw new RegistroNaoExiste(id);
             }
@@ -97,4 +102,4 @@ class Receitas {
     }
 }
 
-module.exports = Receitas;
+module.exports = ReceitaController;

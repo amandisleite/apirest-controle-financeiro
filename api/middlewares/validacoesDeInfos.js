@@ -5,22 +5,21 @@ const RegistroJaExiste = require("../errors/RegistroJaExiste");
 const CampoInvalido = require("../errors/CampoInvalido");
 
 class Validacao {
-
-    static async validaInfo(novaInfo, tabela) {
-
+    
+    static async validaInfo(novaInfo, id, database) {
+        
         let contemTodasAsInfos = Object.values(novaInfo).length >= 3;
-
+        
         if (contemTodasAsInfos) {
             const dataNovaInfo = novaInfo.data;
             const descricaoNovaInfo = novaInfo.descricao;
-            
-            tabela = tabela;
             
             const comecoDoMes = moment(dataNovaInfo).startOf('month').format('YYYY-MM-DD');
             const finalDoMes = moment(dataNovaInfo).endOf('month').format('YYYY-MM-DD');
             
             try {
-                const infoExisteEmAlgumRegistro = await database.tabela.findOne({
+
+                const infoExisteEmAlgumRegistro = await database.findOne({
                     where: {
                         [Op.and]: {
                             descricao: descricaoNovaInfo,
@@ -34,12 +33,15 @@ class Validacao {
                 );
                     
                 if (infoExisteEmAlgumRegistro) {
-                    return true;
-                } else {
+                    if (!id) {
+                        return true;
+                    } else {
                     return false;
+                    }
                 }
-            
+                
             } catch (error) {
+                console.log(error.message)
                 throw new RegistroJaExiste;
             }
 
@@ -47,7 +49,6 @@ class Validacao {
             throw new CampoInvalido;
         }
     }
-    
 }
 
 module.exports = Validacao;
