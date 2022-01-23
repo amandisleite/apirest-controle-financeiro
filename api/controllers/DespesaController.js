@@ -1,15 +1,16 @@
 const database = require("../models");
-const moment = require("moment");
-const { Op } = require("sequelize");
+
 const RegistroJaExiste = require("../errors/RegistroJaExiste");
 const RegistroNaoExiste = require("../errors/RegistroNaoExiste");
+
+const { validaInfo } = require("../middlewares/validacoesDeInfos");
 
 class Despesas {
     static async cadastroDeDespesa(req, res, next) {
         let novaDespesa = req.body;
 
         try {
-            let despesaJaExiste = await validaDespesa(novaDespesa);
+            let despesaJaExiste = await validaInfo(novaDespesa, Despesas);
             
             if (despesaJaExiste) {
                 throw new RegistroJaExiste;
@@ -50,7 +51,7 @@ class Despesas {
         const novasInfos = req.body;
 
         try {
-            let despesaJaExiste = await validaDespesa(novasInfos);
+            let despesaJaExiste = await validaInfo(novasInfos, Despesas);
             
             if (despesaJaExiste) {
                 throw new RegistroJaExiste;
@@ -91,6 +92,7 @@ class Despesas {
     }
 }
 
+/*
 async function validaDespesa(novaDespesa) {
 
     const dataNovaDespesa = novaDespesa.data;
@@ -123,5 +125,6 @@ async function validaDespesa(novaDespesa) {
         return error.message
     }
 }
+*/
 
 module.exports = Despesas;

@@ -1,15 +1,16 @@
 const database = require("../models");
-const moment = require("moment");
-const { Op } = require("sequelize");
+
 const RegistroJaExiste = require("../errors/RegistroJaExiste");
 const RegistroNaoExiste = require("../errors/RegistroNaoExiste");
+
+const { validaInfo } = require("../middlewares/validacoesDeInfos");
 
 class Receitas {
     static async cadastroDeReceita(req, res, next) {
         let novaReceita = req.body;
 
         try {
-            let receitaJaExiste = await validaReceita(novaReceita);
+            let receitaJaExiste = await validaInfo(novaReceita, Receitas);
             
             if (receitaJaExiste) {
                 throw new RegistroJaExiste;
@@ -39,7 +40,12 @@ class Receitas {
             const umaReceita = await database.Receitas.findOne({
                 where: { id: Number(id) }
             })
-            return res.status(200).json(umaReceita)
+            if (umaReceita) {
+                return res.status(200).json(umaReceita)
+            } else {
+                throw new RegistroNaoExiste;
+            }
+
         } catch (error) {
             return next(error);
         }
@@ -50,7 +56,7 @@ class Receitas {
         const novasInfos = req.body;
 
         try {
-            let receitaJaExiste = await validaAtualizacaoDeReceita(novasInfos);
+            let receitaJaExiste = await validaInfo(novasInfos, Receitas);
             
             if (receitaJaExiste) {
                 throw new RegistroJaExiste;
@@ -91,6 +97,7 @@ class Receitas {
     }
 }
 
+/*
 async function validaReceita(novaReceita) {
 
     const dataNovaReceita = novaReceita.data;
@@ -123,5 +130,6 @@ async function validaReceita(novaReceita) {
         return error.message
     }
 }
+*/
 
 module.exports = Receitas;
