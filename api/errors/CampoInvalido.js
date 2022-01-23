@@ -1,6 +1,6 @@
 class CampoInvalido extends Error {
-    constructor (campo) {
-        super(`o campo ${campo} está inválido`);
+    constructor () {
+        super('há campos não preenchidos');
 
         this.name = 'CampoInvalido';
         this.errorId = 0;
