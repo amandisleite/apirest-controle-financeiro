@@ -1,36 +1,38 @@
 const database = require("../models");
 const moment = require("moment");
 const { Op } = require("sequelize");
+const RegistroJaExiste = require("../errors/RegistroJaExiste");
+const RegistroNaoExiste = require("../errors/RegistroNaoExiste");
 
 class Despesas {
-    static async cadastroDeDespesa(req, res) {
+    static async cadastroDeDespesa(req, res, next) {
         let novaDespesa = req.body;
 
         try {
             let despesaJaExiste = await validaDespesa(novaDespesa);
             
             if (despesaJaExiste) {
-                throw new Error('despesa com a mesma descrição já cadastrada nesse mês')
+                throw new RegistroJaExiste;
             } else {
                 const despesaCriada = await database.Despesas.create(novaDespesa);
                 return res.status(200).json(despesaCriada);
             }
 
         } catch (error) {
-            return res.status(400).json(`erro: ${error.message} - não foi possível cadastrar nova despesa`)
+            return next(error);
         }
     }
 
-    static async listagemDeDespesa(req, res) {
+    static async listagemDeDespesa(req, res, next) {
         try {
             const todasDespesas = await database.Despesas.findAll();
             return res.status(200).json(todasDespesas);
         } catch (error) {
-            return res.status(400).json(error.message);
+            return next(error);
         }
     }
 
-    static async detalhamentoDeDespesa(req, res) {
+    static async detalhamentoDeDespesa(req, res, next) {
         const { id } = req.params;
 
         try {
@@ -39,11 +41,11 @@ class Despesas {
             })
             return res.status(200).json(umaDespesa)
         } catch (error) {
-            return res.status(400).json(error.message)
+            return next(error);
         }
     }
 
-    static async atualizaDespesa(req, res) {
+    static async atualizaDespesa(req, res, next) {
         const { id } = req.params;
         const novasInfos = req.body;
 
@@ -51,7 +53,7 @@ class Despesas {
             let despesaJaExiste = await validaDespesa(novasInfos);
             
             if (despesaJaExiste) {
-                throw new Error('receita com a mesma descrição já cadastrada nesse mês')
+                throw new RegistroJaExiste;
             } else {
                 await database.Despesas.update(novasInfos, {
                     where: { id: Number(id) }
@@ -63,11 +65,11 @@ class Despesas {
             }
 
         } catch (error) {
-            return res.status(400).json(`erro: ${error.message} - não foi possível atualizar despesa`)
+            return next(error);
         }
     }
 
-    static async apagaDespesa(req, res) {
+    static async apagaDespesa(req, res, next) {
         const { id } = req.params;
 
         try {
@@ -80,11 +82,11 @@ class Despesas {
                 })
                 return res.status(200).json(`despesa ${id} deletada`)
             } else {
-                return res.status(400).json(`erro: ${error.message} - despesa de ${id} não existe`)
+                throw new RegistroNaoExiste(id);
             }
 
         } catch (error) {
-            return res.status(400).json(`erro: ${error.message} - despesa não pode ser deletada`)
+            return next(error);
         }
     }
 }
@@ -121,6 +123,5 @@ async function validaDespesa(novaDespesa) {
         return error.message
     }
 }
-
 
 module.exports = Despesas;
