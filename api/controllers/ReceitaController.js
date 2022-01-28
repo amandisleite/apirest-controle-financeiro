@@ -1,5 +1,8 @@
 const database = require("../models");
 
+const ReceitasServices = require("../services/ReceitasServices");
+const receitasServices = new ReceitasServices;
+
 const RegistroPraAtualizarJaCriado = require("../errors/RegistroPraAtualizarJaCriado");
 const RegistroJaCriado = require("../errors/RegistroJaCriado");
 const RegistroNaoExiste = require("../errors/RegistroNaoExiste");
@@ -18,7 +21,7 @@ class ReceitaController {
             if (receitaJaExiste) {
                 throw new RegistroJaCriado;
             } else {
-                const receitaCriada = await database.Receitas.create(novaReceita);
+                const receitaCriada = await receitasServices.cadastraRegistro(novaReceita);
                 return res.status(201).json(receitaCriada);
             }
 
@@ -29,7 +32,7 @@ class ReceitaController {
 
     static async listagemDeReceitas(req, res, next) {
         try {
-            const todasReceitas = await database.Receitas.findAll();
+            const todasReceitas = await receitasServices.pegaTodosRegistros();
             return res.status(200).json(todasReceitas);
         } catch (error) {
             return next(error);
@@ -40,9 +43,7 @@ class ReceitaController {
         const { id } = req.params;
 
         try {
-            const umaReceita = await database.Receitas.findOne({
-                where: { id: Number(id) }
-            })
+            const umaReceita = await receitasServices.pegaUmRegistro(Number(id));
             if (umaReceita) {
                 return res.status(200).json(umaReceita)
             } else {
@@ -65,12 +66,8 @@ class ReceitaController {
             if (receitaJaExiste) {
                 throw new RegistroPraAtualizarJaCriado;
             } else {
-                await database.Receitas.update(novasInfos, {
-                    where: { id: Number(id) }
-                })
-                const receitaAtualizada = await database.Receitas.findOne({
-                    where: { id: Number(id) }
-                });
+                await receitasServices.atualizaRegistro(novasInfos, Number(id));
+                const receitaAtualizada = await receitasServices.pegaUmRegistro(Number(id));
                 return res.status(202).json(`receita teve seus dados atualizados para:
                 ${Object.entries(receitaAtualizada.dataValues)}`);
             }
@@ -84,9 +81,7 @@ class ReceitaController {
         const { id } = req.params;
 
         try {
-            const existeReceita = await database.Receitas.findOne({
-                where: { id: Number(id) }
-            })
+            const existeReceita = await receitasServices.pegaUmRegistro(Number(id));
             if (existeReceita) {
                 await database.Receitas.destroy({
                     where: { id: Number(id) }
