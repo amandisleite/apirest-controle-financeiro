@@ -18,7 +18,7 @@ class Services {
         .update(novosDados, { where: { id: id }})
     }
 
-    async pegaTodosRegistros(where) {
+    async pegaTodosRegistros(where = {}) {
         return database[this.nomeDoModelo]
         .findAll({ where: { ...where }})
     }
@@ -74,6 +74,33 @@ class Services {
                     [Op.lte]: finalDoMes
                     }}}
         );
+    }
+
+    async somaTodosRegistrosMesmoMes(ano, mes) {
+        const comecoDoMes = moment(`${ano}-${mes}`).startOf('month').format('YYYY-MM-DD');
+        const finalDoMes = moment(`${ano}-${mes}`).endOf('month').format('YYYY-MM-DD');
+
+        return database[this.nomeDoModelo]
+        .sum('valor',
+            { where: {
+            data: {
+                [Op.gte]: comecoDoMes,
+                [Op.lte]: finalDoMes
+                }}})
+    }
+
+    async somaPorCategoriaMesmoMes(categoria, ano, mes) {
+        const comecoDoMes = moment(`${ano}-${mes}`).startOf('month').format('YYYY-MM-DD');
+        const finalDoMes = moment(`${ano}-${mes}`).endOf('month').format('YYYY-MM-DD');
+
+        return database[this.nomeDoModelo]
+        .sum('valor',
+            { where: {
+                categorias: categoria,
+                data: {
+                    [Op.gte]: comecoDoMes,
+                    [Op.lte]: finalDoMes
+                    }}})
     }
 }
 
