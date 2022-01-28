@@ -4,10 +4,8 @@ const receitasServices = new ReceitasServices;
 const error = require("../errors");
 
 class ReceitaController {
-
     static async cadastroDeReceita(req, res, next) {
         let novaReceita = req.body;
-        let id = 0;
 
         try {
             let receitaJaExiste = await receitasServices.validaSeRegistroExisteMesmoMes(novaReceita);
@@ -25,9 +23,25 @@ class ReceitaController {
     }
 
     static async listagemDeReceitas(req, res, next) {
+        const { descricao } = req.query;
+        const where = {};
+
+        descricao ? where.descricao = descricao : null;
+
         try {
-            const todasReceitas = await receitasServices.pegaTodosRegistros();
+            const todasReceitas = await receitasServices.pegaTodosRegistros(where);
             return res.status(200).json(todasReceitas);
+        } catch (error) {
+            return next(error);
+        }
+    }
+
+    static async listagemDeReceitasMesmoMes(req, res, next) {
+        const { ano, mes } = req.params;
+
+        try {
+            const receitasMesmoMes = await receitasServices.consultaRegistroMesmoMes(ano, mes);
+            return res.status(200).json(receitasMesmoMes);
         } catch (error) {
             return next(error);
         }
@@ -93,6 +107,16 @@ class ReceitaController {
         try {
             const receitasApagadas = await receitasServices.pegaRegistrosDeletados();
             return res.status(200).json(receitasApagadas);
+        } catch (error) {
+            return next(error);
+        }
+    }
+
+    static async consultaReceitaPorDescricao(req, res, next) {
+        const { descricao } = req.query;
+        try {
+            const receitasComMesmaDescricao = await receitasServices.consultaPorDescricao(descricao);
+            return res.status(200).json(receitasComMesmaDescricao);
         } catch (error) {
             return next(error);
         }

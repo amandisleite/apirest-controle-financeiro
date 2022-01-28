@@ -7,6 +7,7 @@ const router = Router();
 router.post('/despesas', DespesaController.cadastroDeDespesa);
 router.get('/despesas', DespesaController.listagemDeDespesa);
 router.get('/despesas/:id', DespesaController.detalhamentoDeDespesa);
+router.get('/despesas/:ano/:mes', DespesaController.listagemDeDespesasMesmoMes);
 router.put('/despesas/:id', DespesaController.atualizaDespesa);
 router.delete('/despesas/:id', DespesaController.apagaDespesa);
 

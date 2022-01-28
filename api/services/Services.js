@@ -1,7 +1,7 @@
 const database = require("../models");
 
 const moment = require("moment");
-const { Op } = require("sequelize");
+const { Op, sequelize } = require("sequelize");
 
 class Services {
     constructor(nomeDoModelo) {
@@ -18,9 +18,9 @@ class Services {
         .update(novosDados, { where: { id: id }})
     }
 
-    async pegaTodosRegistros() {
+    async pegaTodosRegistros(where) {
         return database[this.nomeDoModelo]
-        .findAll()
+        .findAll({ where: { ...where }})
     }
 
     async pegaUmRegistro(id) {
@@ -57,7 +57,24 @@ class Services {
         );
     }
 
-    
+    async consultaPorDescricao(dado) {
+        return database[this.nomeDoModelo]
+        .findAll({ where: { descricao: dado }})
+    }
+
+    async consultaRegistroMesmoMes(ano, mes) {
+
+        const comecoDoMes = moment(`${ano}-${mes}`).startOf('month').format('YYYY-MM-DD');
+        const finalDoMes = moment(`${ano}-${mes}`).endOf('month').format('YYYY-MM-DD');
+        
+        return database[this.nomeDoModelo]
+        .findAll({ where: {
+                data: {
+                    [Op.gte]: comecoDoMes,
+                    [Op.lte]: finalDoMes
+                    }}}
+        );
+    }
 }
 
 module.exports = Services;
