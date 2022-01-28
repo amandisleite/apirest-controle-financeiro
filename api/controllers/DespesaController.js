@@ -23,10 +23,11 @@ class DespesaController {
     }
 
     static async listagemDeDespesa(req, res, next) {
-        const { descricao } = req.query;
+        const { descricao, categoria } = req.query;
         const where = {};
 
         descricao ? where.descricao = descricao : null;
+        categoria ? where.categorias = categoria : null;
 
         try {
             const todasDespesas = await despesasServices.pegaTodosRegistros(where);

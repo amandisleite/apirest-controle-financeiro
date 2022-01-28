@@ -34,7 +34,14 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'data inválida'
         }
       },
-  }
+    },
+    categorias: {
+      type: DataTypes.ENUM,
+      values: ['Alimentação', 'Saúde', 'Moradia', 'Transporte', 'Educação', 'Lazer', 'Imprevistos', 'Outras'],
+      validate: {
+        len: [2,15]
+      }
+    }
   }, {
     sequelize,
     modelName: 'Despesas',

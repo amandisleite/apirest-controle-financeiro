@@ -57,11 +57,6 @@ class Services {
         );
     }
 
-    async consultaPorDescricao(dado) {
-        return database[this.nomeDoModelo]
-        .findAll({ where: { descricao: dado }})
-    }
-
     async consultaRegistroMesmoMes(ano, mes) {
 
         const comecoDoMes = moment(`${ano}-${mes}`).startOf('month').format('YYYY-MM-DD');

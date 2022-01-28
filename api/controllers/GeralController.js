@@ -1,9 +1,8 @@
 const ReceitasServices = require("../services/ReceitasServices");
-const receitasServices = new ReceitasServices;
 const DespesasServices = require("../services/DespesasServices");
-const despesasServices = new DespesasServices;
 
-const error = require("../errors");
+const receitasServices = new ReceitasServices;
+const despesasServices = new DespesasServices;
 
 class GeralController {
 
@@ -20,16 +19,11 @@ class GeralController {
             for (let cat of categorias) {
                 let valorPorCategoria = await despesasServices.somaPorCategoriaMesmoMes(cat, ano, mes)
                 if (valorPorCategoria === null) valorPorCategoria = 0;
-                cadaCategoria.push(`valor de ${cat} é de ${valorPorCategoria.toFixed(2)}`)
+                cadaCategoria.push(`valor de ${cat} é de R$ ${valorPorCategoria.toFixed(2)}`)
             }
 
-            if (valorTodasDespesas === null) {
-                valorTodasDespesas = 0;
-            }
-
-            if (valorTodasReceitas === null) {
-                valorTodasReceitas = 0;
-            }
+            if (valorTodasDespesas === null) valorTodasDespesas = 0;
+            if (valorTodasReceitas === null) valorTodasReceitas = 0;
 
             const resumo = {
                 receitas: `O valor total de receitas em ${mes}/${ano} é de R$ ${valorTodasReceitas.toFixed(2)}`,
@@ -38,7 +32,8 @@ class GeralController {
                 valorTotalPorCategoria: cadaCategoria
             }
 
-            return res.status(200).json(resumo)
+            return res.status(200).json(resumo);
+
         } catch (error) {
             return next(error);
         }
