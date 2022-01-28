@@ -14,9 +14,27 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Despesas.init({
-    descricao: DataTypes.STRING,
-    valor: DataTypes.FLOAT,
-    data: DataTypes.DATEONLY
+    descricao: {
+      type: DataTypes.STRING,
+      validate: {
+        len: [2,20]
+      }
+    },
+    valor: {
+      type: DataTypes.FLOAT,
+      validate: {
+        len: [2,7]
+      }
+    },
+    data: {
+      type: DataTypes.DATEONLY,
+      validate: {
+        isDate: {
+          args: true,
+          msg: 'data inválida'
+        }
+      },
+  }
   }, {
     sequelize,
     modelName: 'Despesas',

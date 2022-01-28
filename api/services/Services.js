@@ -1,5 +1,8 @@
 const database = require("../models");
 
+const moment = require("moment");
+const { Op } = require("sequelize");
+
 class Services {
     constructor(nomeDoModelo) {
         this.nomeDoModelo = nomeDoModelo;
@@ -25,8 +28,36 @@ class Services {
         .findOne({ where: { id: id }})
     }
 
+    async apagaRegistro(id) {
+        return database[this.nomeDoModelo]
+        .destroy({ where: { id: id }})
+    }
 
+    async pegaRegistrosDeletados() {
+        console.log('to aqui')
+        return database[this.nomeDoModelo]
+        .findAll({ paranoid: false })
+    }
 
+    async validaSeRegistroExisteMesmoMes(novosDados) {
+        const dataNovaInfo = novosDados.data;
+        const descricaoNovaInfo = novosDados.descricao;
+        
+        const comecoDoMes = moment(dataNovaInfo).startOf('month').format('YYYY-MM-DD');
+        const finalDoMes = moment(dataNovaInfo).endOf('month').format('YYYY-MM-DD');
+
+        return database[this.nomeDoModelo]
+        .findOne({ where: {
+                [Op.and]: {
+                    descricao: descricaoNovaInfo,
+                    data: {
+                        [Op.gte]: comecoDoMes,
+                        [Op.lte]: finalDoMes
+                        }}}}
+        );
+    }
+
+    
 }
 
 module.exports = Services;
