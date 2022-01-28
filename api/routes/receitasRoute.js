@@ -11,6 +11,4 @@ router.get('/receitas/:ano/:mes', ReceitaController.listagemDeReceitasMesmoMes);
 router.put('/receitas/:id', ReceitaController.atualizaReceita);
 router.delete('/receitas/:id', ReceitaController.apagaReceita);
 
-router.get('/receitas/apagadas', ReceitaController.consultaReceitasApagadas);
-
 module.exports = router;

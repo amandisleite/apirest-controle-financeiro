@@ -102,16 +102,6 @@ class ReceitaController {
         }
     }
 
-    static async consultaReceitasApagadas(req, res, next) {
-        console.log('chamei aqui')
-        try {
-            const receitasApagadas = await receitasServices.pegaRegistrosDeletados();
-            return res.status(200).json(receitasApagadas);
-        } catch (error) {
-            return next(error);
-        }
-    }
-
     static async consultaReceitaPorDescricao(req, res, next) {
         const { descricao } = req.query;
         try {
