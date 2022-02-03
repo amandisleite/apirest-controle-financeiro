@@ -2,6 +2,7 @@ const database = require("../models");
 
 const moment = require("moment");
 const { Op, sequelize } = require("sequelize");
+const bcrypt = require("bcrypt");
 
 class Services {
     constructor(nomeDoModelo) {
@@ -96,6 +97,11 @@ class Services {
                     [Op.gte]: comecoDoMes,
                     [Op.lte]: finalDoMes
                     }}})
+    }
+
+    async login(nome, email, senha) {
+        const senhaHash = bcrypt.hash(senha, 12);
+        
     }
 }
 

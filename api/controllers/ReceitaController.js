@@ -111,6 +111,7 @@ class ReceitaController {
             return next(error);
         }
     }
+    
 }
 
 module.exports = ReceitaController;
