@@ -3,6 +3,7 @@ const RegistroJaExiste = require("../errors/RegistroJaExiste");
 const RegistroNaoExiste = require("../errors/RegistroNaoExiste");
 const RegistroPraAtualizarJaCriado = require("../errors/RegistroPraAtualizarJaCriado");
 const RegistroJaCriado = require("../errors/RegistroJaCriado");
+const EmailSenhaInvalidos = require("../errors/EmailSenhaInvalidos");
 
 module.exports = (error, req, res, next) => {
 
@@ -11,7 +12,8 @@ module.exports = (error, req, res, next) => {
     if (error instanceof RegistroNaoExiste ||
         error instanceof RegistroJaExiste ||
         error instanceof RegistroJaCriado ||
-        error instanceof RegistroPraAtualizarJaCriado) {
+        error instanceof RegistroPraAtualizarJaCriado ||
+        error instanceof EmailSenhaInvalidos) {
         status = 404;
     } 
 

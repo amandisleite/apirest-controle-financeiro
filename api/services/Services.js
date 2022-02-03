@@ -25,7 +25,7 @@ class Services {
 
     async pegaUmRegistro(where = {}) {
         return database[this.nomeDoModelo]
-        .findOne({ where: { ...where }})
+        .findOne({ where: { ...where }, query: { raw: true }})
     }
 
     async apagaRegistro(id) {

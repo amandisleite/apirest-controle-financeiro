@@ -1,7 +1,15 @@
 const UsuariosServices = require("../services/UsuariosServices");
 const usuariosServices = new UsuariosServices;
 
+const jwt = require("jsonwebtoken");
+
 const error = require("../errors");
+
+function geraToken(usuario) {
+    const payload = { email: usuario.email };
+    const token = jwt.sign(payload, process.env.CHAVE_JWT, { expiresIn: '15m' });
+    return token;
+}
 
 class UsuarioController {
     static async cadastroDeUsuario(req, res, next) {
@@ -13,7 +21,9 @@ class UsuarioController {
             if (emailJaExiste) {
                 throw new error.RegistroJaExiste;
             } else {
+                const token = geraToken(novoCadastro);
                 const usuarioCriado = await usuariosServices.login(novoCadastro);
+                res.set('Authorization', token);
                 return res.status(201).json(usuarioCriado);
             }
 
@@ -22,91 +32,20 @@ class UsuarioController {
         }
     }
 
-    static async listagemDeReceitas(req, res, next) {
-        const { descricao } = req.query;
-        const where = {};
-
-        descricao ? where.descricao = descricao : null;
+    static async loginDeUsuario(req, res, next) {
+        let usuario = req.body;
 
         try {
-            const todasReceitas = await receitasServices.pegaTodosRegistros(where);
-            return res.status(200).json(todasReceitas);
-        } catch (error) {
-            return next(error);
-        }
-    }
-
-    static async listagemDeReceitasMesmoMes(req, res, next) {
-        const { ano, mes } = req.params;
-
-        try {
-            const receitasMesmoMes = await receitasServices.consultaRegistroMesmoMes(ano, mes);
-            return res.status(200).json(receitasMesmoMes);
-        } catch (error) {
-            return next(error);
-        }
-    }
-
-    static async detalhamentoDeReceita(req, res, next) {
-        const { id } = req.params;
-
-        try {
-            const umaReceita = await receitasServices.pegaUmRegistro(Number(id));
-            if (umaReceita) {
-                return res.status(200).json(umaReceita)
-            } else {
-                throw new error.RegistroNaoExiste;
-            }
-
-        } catch (error) {
-            return next(error);
-        }
-    }
-
-    static async atualizaReceita(req, res, next) {
-        const { id } = req.params;
-        const novasInfos = req.body;
-
-        try {
-   
-            let receitaJaExiste = await receitasServices.validaSeRegistroExisteMesmoMes(novasInfos);
+            let validaUsuario = await usuariosServices.validaSenha(usuario);
             
-            if (receitaJaExiste) {
-                throw new error.RegistroPraAtualizarJaCriado;
+            if (!validaUsuario) {
+                throw new error.EmailSenhaInvalidos;
             } else {
-                await receitasServices.atualizaRegistro(novasInfos, Number(id));
-                const receitaAtualizada = await receitasServices.pegaUmRegistro(Number(id));
-                return res.status(202).json(`receita teve seus dados atualizados para:
-                ${Object.entries(receitaAtualizada.dataValues)}`);
+                const token = geraToken(usuario);
+                res.set('Authorization', token);
+                return res.status(200).json(`usuário logado!`);
             }
 
-        } catch (error) {
-            return next(error);
-        }
-    }
-
-    static async apagaReceita(req, res, next) {
-        const { id } = req.params;
-
-        try {
-            const existeReceita = await receitasServices.pegaUmRegistro(Number(id));
-            if (existeReceita) {
-                await receitasServices.apagaRegistro(Number(id))
-                return res.status(202).json(`receita ${id} deletada`)
-            } else {
-                throw new error.RegistroNaoExiste(id);
-            }
-
-        } catch (error) {
-            return next(error);
-        }
-    }
-
-    static async consultaReceitaPorDescricao(req, res, next) {
-        const { descricao } = req.query;
-        try {
-            const receitasComMesmaDescricao = await receitasServices.consultaPorDescricao(descricao);
-            return res.status(200).json(receitasComMesmaDescricao);
         } catch (error) {
             return next(error);
         }

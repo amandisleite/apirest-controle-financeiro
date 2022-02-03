@@ -24,6 +24,20 @@ class UsuariosServices extends Services {
         emailUsuario ? where.email = emailUsuario : null;
         return await this.pegaUmRegistro(where);
     }
+
+    async validaSenha(dados) {
+        const senhaPassada = dados.senha;
+        const emailExiste = await this.validaEmail(dados);
+
+        if (emailExiste === null) {
+            return false;
+        } else {
+            const senhaNoBanco = emailExiste.senha;
+            const senhasSaoIguais = await bcrypt.compare(senhaPassada, senhaNoBanco);
+            
+            return senhasSaoIguais;
+        }
+    }
 }
 
 module.exports = UsuariosServices;
