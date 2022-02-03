@@ -4,6 +4,7 @@ const RegistroNaoExiste = require("../errors/RegistroNaoExiste");
 const RegistroPraAtualizarJaCriado = require("../errors/RegistroPraAtualizarJaCriado");
 const RegistroJaCriado = require("../errors/RegistroJaCriado");
 const EmailSenhaInvalidos = require("../errors/EmailSenhaInvalidos");
+const UsuarioNaoAutenticado = require("../errors/UsuarioNaoAutenticado");
 
 module.exports = (error, req, res, next) => {
 
@@ -17,7 +18,8 @@ module.exports = (error, req, res, next) => {
         status = 404;
     } 
 
-    if (error instanceof CampoInvalido) {
+    if (error instanceof CampoInvalido ||
+        error instanceof UsuarioNaoAutenticado) {
         status = 400;
     }
     

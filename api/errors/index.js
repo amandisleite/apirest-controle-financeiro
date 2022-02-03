@@ -4,6 +4,7 @@ const RegistroJaCriado = require("./RegistroJaCriado");
 const RegistroJaExiste = require("./RegistroJaExiste");
 const RegistroNaoExiste = require("./RegistroNaoExiste");
 const RegistroPraAtualizarJaCriado = require("./RegistroPraAtualizarJaCriado");
+const UsuarioNaoAutenticado = require("./UsuarioNaoAutenticado");
 
 module.exports = {
     CampoInvalido: CampoInvalido,
@@ -11,5 +12,6 @@ module.exports = {
     RegistroJaExiste: RegistroJaExiste,
     RegistroNaoExiste: RegistroNaoExiste,
     RegistroPraAtualizarJaCriado, RegistroPraAtualizarJaCriado,
-    EmailSenhaInvalidos: EmailSenhaInvalidos
+    EmailSenhaInvalidos: EmailSenhaInvalidos,
+    UsuarioNaoAutenticado: UsuarioNaoAutenticado
 }
