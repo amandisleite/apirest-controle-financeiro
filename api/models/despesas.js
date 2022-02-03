@@ -41,28 +41,6 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: [2,15]
       }
-    },
-    nomeUsuario: {
-      type: DataTypes.STRING,
-      validate: {
-        len: [2,30]
-      }
-    },
-    emailUsuario: {
-      type: DataTypes.STRING,
-      validate: {
-        len: [2,30],
-        isEmail: {
-          args: true,
-          msg: 'e-mail inválido'
-        }
-      }
-    },
-    senhaUsuario: {
-      type: DataTypes.STRING,
-      validate: {
-        len: [2,20]
-      }
     }
   }, {
     sequelize,

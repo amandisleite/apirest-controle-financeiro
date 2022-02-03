@@ -1,6 +1,6 @@
 class RegistroJaExiste extends Error {
     constructor () {
-        super(`o registro cadastrado já existe - tipo1`);
+        super(`o registro cadastrado já existe`);
 
         this.name = 'RegistroJaExiste';
         this.errorId = 1;

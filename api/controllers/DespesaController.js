@@ -50,9 +50,12 @@ class DespesaController {
 
     static async detalhamentoDeDespesa(req, res, next) {
         const { id } = req.params;
+        const where = {};
+
+        id ? where.id = id : null;
 
         try {
-            const umaDespesa = await despesasServices.pegaUmRegistro(Number(id));
+            const umaDespesa = await despesasServices.pegaUmRegistro(where);
             if (umaDespesa) {
                 return res.status(200).json(umaDespesa)
             } else {
@@ -87,9 +90,12 @@ class DespesaController {
 
     static async apagaDespesa(req, res, next) {
         const { id } = req.params;
+        const where = {};
+
+        id ? where.id = id : null;
 
         try {
-            const existeDespesa = await despesasServices.pegaUmRegistro(Number(id));
+            const existeDespesa = await despesasServices.pegaUmRegistro(where);
             if (existeDespesa) {
                 await despesasServices.apagaRegistro(Number(id));
                 return res.status(202).json(`despesa ${id} deletada`)

@@ -2,7 +2,6 @@ const database = require("../models");
 
 const moment = require("moment");
 const { Op, sequelize } = require("sequelize");
-const bcrypt = require("bcrypt");
 
 class Services {
     constructor(nomeDoModelo) {
@@ -24,9 +23,9 @@ class Services {
         .findAll({ where: { ...where }})
     }
 
-    async pegaUmRegistro(id) {
+    async pegaUmRegistro(where = {}) {
         return database[this.nomeDoModelo]
-        .findOne({ where: { id: id }})
+        .findOne({ where: { ...where }})
     }
 
     async apagaRegistro(id) {
@@ -99,10 +98,6 @@ class Services {
                     }}})
     }
 
-    async login(nome, email, senha) {
-        const senhaHash = bcrypt.hash(senha, 12);
-        
-    }
 }
 
 module.exports = Services;

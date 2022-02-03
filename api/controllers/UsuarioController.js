@@ -1,20 +1,20 @@
-const ReceitasServices = require("../services/ReceitasServices");
-const receitasServices = new ReceitasServices;
+const UsuariosServices = require("../services/UsuariosServices");
+const usuariosServices = new UsuariosServices;
 
 const error = require("../errors");
 
-class ReceitaController {
-    static async cadastroDeReceita(req, res, next) {
-        let novaReceita = req.body;
+class UsuarioController {
+    static async cadastroDeUsuario(req, res, next) {
+        let novoCadastro = req.body;
 
         try {
-            let receitaJaExiste = await receitasServices.validaSeRegistroExisteMesmoMes(novaReceita);
+            let emailJaExiste = await usuariosServices.validaEmail(novoCadastro);
             
-            if (receitaJaExiste) {
-                throw new error.RegistroJaCriado;
+            if (emailJaExiste) {
+                throw new error.RegistroJaExiste;
             } else {
-                const receitaCriada = await receitasServices.cadastraRegistro(novaReceita);
-                return res.status(201).json(receitaCriada);
+                const usuarioCriado = await usuariosServices.login(novoCadastro);
+                return res.status(201).json(usuarioCriado);
             }
 
         } catch (error) {
@@ -49,12 +49,9 @@ class ReceitaController {
 
     static async detalhamentoDeReceita(req, res, next) {
         const { id } = req.params;
-        const where = {};
-
-        id ? where.id = id : null;
 
         try {
-            const umaReceita = await receitasServices.pegaUmRegistro(where);
+            const umaReceita = await receitasServices.pegaUmRegistro(Number(id));
             if (umaReceita) {
                 return res.status(200).json(umaReceita)
             } else {
@@ -90,12 +87,9 @@ class ReceitaController {
 
     static async apagaReceita(req, res, next) {
         const { id } = req.params;
-        const where = {};
-
-        id ? where.id = id : null;
 
         try {
-            const existeReceita = await receitasServices.pegaUmRegistro(where);
+            const existeReceita = await receitasServices.pegaUmRegistro(Number(id));
             if (existeReceita) {
                 await receitasServices.apagaRegistro(Number(id))
                 return res.status(202).json(`receita ${id} deletada`)
@@ -120,4 +114,4 @@ class ReceitaController {
     
 }
 
-module.exports = ReceitaController;
+module.exports = UsuarioController;
