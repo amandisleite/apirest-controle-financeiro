@@ -13,6 +13,9 @@ API criada para auxiliar no controle financeiro, como desafio do <a href='https:
     - Por mês;<br>
 - Resumo geral com total de receitas e despesas, saldo e gastos por categorias dentro de um mês.<br><br>
 
+#### Autenticação de usuário implementada - tem que criar um para usar a API.
+- Processo feito usando Bcrypt para armazenar senhas e JWT para gerar tokens de autenticação.
+
 Desafio ainda em andamento.
 
 ## Tecnologias usadas:
