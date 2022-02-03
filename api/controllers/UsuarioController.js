@@ -7,7 +7,7 @@ const error = require("../errors");
 
 function geraToken(usuario) {
     const payload = { email: usuario.email };
-    const token = jwt.sign(payload, process.env.CHAVE_JWT, { expiresIn: '20s' });
+    const token = jwt.sign(payload, process.env.CHAVE_JWT, { expiresIn: '1d' });
     return token;
 }
 
